@@ -3,6 +3,9 @@ const { nanoid } = require('nanoid');
 const cors = require('cors');
 const path = require('path');
 
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 const app = express();
 const port = 3000;
 
@@ -111,6 +114,87 @@ let instruments = [
   }
 ];
 
+// ==================== SWAGGER КОНФИГУРАЦИЯ ====================
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Music Shop API',
+      version: '1.0.0',
+      description: 'API для управления каталогом музыкальных инструментов',
+      contact: {
+        name: 'Music Shop',
+        email: 'info@musicshop.com'
+      }
+    },
+    servers: [
+      {
+        url: `http://localhost:${port}`,
+        description: 'Локальный сервер разработки',
+      },
+    ],
+  },
+  apis: ['./app.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Instrument:
+ *       type: object
+ *       required:
+ *         - name
+ *         - category
+ *         - description
+ *         - price
+ *         - stock
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Уникальный идентификатор инструмента
+ *           example: "abc123"
+ *         name:
+ *           type: string
+ *           description: Название инструмента
+ *           example: "Fender Stratocaster"
+ *         category:
+ *           type: string
+ *           description: Категория инструмента
+ *           example: "Гитары"
+ *         description:
+ *           type: string
+ *           description: Описание инструмента
+ *           example: "Электрогитара, корпус из ольхи, гриф из клена"
+ *         price:
+ *           type: number
+ *           description: Цена в рублях
+ *           example: 85000
+ *         stock:
+ *           type: integer
+ *           description: Количество на складе
+ *           example: 5
+ *         rating:
+ *           type: number
+ *           description: Рейтинг (0-5)
+ *           example: 4.8
+ *         image:
+ *           type: string
+ *           description: URL изображения
+ *           example: "http://localhost:3000/images/img1.webp"
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *           description: Сообщение об ошибке
+ *           example: "Instrument not found"
+ */
+
 app.use(express.json());
 
 app.use(cors({
@@ -140,12 +224,53 @@ function findInstrumentOr404(id, res) {
   return instrument;
 }
 
-// GET /api/instruments - получение списка всех инструментов
+/**
+ * @swagger
+ * /api/instruments:
+ *   get:
+ *     summary: Получить список всех инструментов
+ *     tags: [Instruments]
+ *     responses:
+ *       200:
+ *         description: Список инструментов
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Instrument'
+ */
 app.get("/api/instruments", (req, res) => {
   res.json(instruments);
 });
 
-// GET /api/instruments/:id - получение инструмента по ID
+/**
+ * @swagger
+ * /api/instruments/{id}:
+ *   get:
+ *     summary: Получить инструмент по ID
+ *     tags: [Instruments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID инструмента
+ *     responses:
+ *       200:
+ *         description: Данные инструмента
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Instrument'
+ *       404:
+ *         description: Инструмент не найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.get("/api/instruments/:id", (req, res) => {
   const id = req.params.id;
   const instrument = findInstrumentOr404(id, res);
@@ -153,7 +278,67 @@ app.get("/api/instruments/:id", (req, res) => {
   res.json(instrument);
 });
 
-// POST /api/instruments - создание нового инструмента
+/**
+ * @swagger
+ * /api/instruments:
+ *   post:
+ *     summary: Создать новый инструмент
+ *     tags: [Instruments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - category
+ *               - description
+ *               - price
+ *               - stock
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Название инструмента
+ *                 example: "Gibson Les Paul"
+ *               category:
+ *                 type: string
+ *                 description: Категория
+ *                 example: "Гитары"
+ *               description:
+ *                 type: string
+ *                 description: Описание
+ *                 example: "Электрогитара премиум-класса"
+ *               price:
+ *                 type: number
+ *                 description: Цена
+ *                 example: 120000
+ *               stock:
+ *                 type: integer
+ *                 description: Количество на складе
+ *                 example: 2
+ *               rating:
+ *                 type: number
+ *                 description: Рейтинг (0-5)
+ *                 example: 5.0
+ *               image:
+ *                 type: string
+ *                 description: URL изображения
+ *                 example: "http://localhost:3000/images/new.jpg"
+ *     responses:
+ *       201:
+ *         description: Инструмент успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Instrument'
+ *       400:
+ *         description: Ошибка валидации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.post("/api/instruments", (req, res) => {
   const { name, category, description, price, stock, rating, image } = req.body;
 
@@ -176,7 +361,74 @@ app.post("/api/instruments", (req, res) => {
   res.status(201).json(newInstrument);
 });
 
-// PATCH /api/instruments/:id - обновление инструмента
+/**
+ * @swagger
+ * /api/instruments/{id}:
+ *   patch:
+ *     summary: Обновить существующий инструмент
+ *     tags: [Instruments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID инструмента
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Название инструмента
+ *                 example: "Fender Stratocaster (обновленная)"
+ *               category:
+ *                 type: string
+ *                 description: Категория
+ *                 example: "Гитары"
+ *               description:
+ *                 type: string
+ *                 description: Описание
+ *                 example: "Обновленное описание"
+ *               price:
+ *                 type: number
+ *                 description: Цена
+ *                 example: 89000
+ *               stock:
+ *                 type: integer
+ *                 description: Количество на складе
+ *                 example: 4
+ *               rating:
+ *                 type: number
+ *                 description: Рейтинг (0-5)
+ *                 example: 4.9
+ *               image:
+ *                 type: string
+ *                 description: URL изображения
+ *                 example: "http://localhost:3000/images/updated.jpg"
+ *     responses:
+ *       200:
+ *         description: Инструмент успешно обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Instrument'
+ *       400:
+ *         description: Нет данных для обновления
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Инструмент не найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.patch("/api/instruments/:id", (req, res) => {
   const id = req.params.id;
   const instrument = findInstrumentOr404(id, res);
@@ -201,7 +453,29 @@ app.patch("/api/instruments/:id", (req, res) => {
   res.json(instrument);
 });
 
-// DELETE /api/instruments/:id - удаление инструмента
+/**
+ * @swagger
+ * /api/instruments/{id}:
+ *   delete:
+ *     summary: Удалить инструмент
+ *     tags: [Instruments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID инструмента
+ *     responses:
+ *       204:
+ *         description: Инструмент успешно удален (нет тела ответа)
+ *       404:
+ *         description: Инструмент не найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.delete("/api/instruments/:id", (req, res) => {
   const id = req.params.id;
   const exists = instruments.some((i) => i.id === id);
@@ -223,4 +497,5 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
   console.log(`Сервер запущен на http://localhost:${port}`);
+  console.log(`Swagger документация: http://localhost:${port}/api-docs`);
 });
