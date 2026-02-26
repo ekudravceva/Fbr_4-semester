@@ -1,0 +1,16 @@
+.instruments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    padding: 24px 0;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    color: #6c757d;
+    font-size: 18px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,17 @@
+# Корневой .gitignore
+# Зависимости
+**/node_modules
+**/package-lock.json
+
+# Сборка
+**/build
+**/dist
+
+# Системные
+.DS_Store
+.env
+*.log
+
+# IDE
+.vscode/
+.idea/
