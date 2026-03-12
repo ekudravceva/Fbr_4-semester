@@ -7,7 +7,6 @@ import Register from './components/Auth/Register';
 import ProductList from './components/Products/ProductList';
 import ProductForm from './components/Products/ProductForm';
 import ProductDetail from './components/Products/ProductDetail';
-import './App.css';
 
 function App() {
   return (
