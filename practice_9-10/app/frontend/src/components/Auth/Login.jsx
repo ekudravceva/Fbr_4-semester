@@ -25,6 +25,9 @@ const Login = () => {
       const response = await authAPI.login(formData);
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
+
+      window.dispatchEvent(new Event('authChange'));
+
       navigate('/products');
     } catch (err) {
       setError(err.response?.data?.error || 'Ошибка входа');

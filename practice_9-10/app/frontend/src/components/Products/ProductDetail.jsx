@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { productsAPI } from '../../services/api';
+import { productsAPI, getUserRole } from '../../services/api';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -8,12 +8,14 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const userRole = getUserRole();
+  
+  const isAdmin = userRole === 'admin';
+  const isSeller = userRole === 'seller';
+  const canEdit = isSeller || isAdmin;
+  const canDelete = isAdmin;
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const response = await productsAPI.getById(id);
       setProduct(response.data);
@@ -22,7 +24,11 @@ const ProductDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const handleDelete = async () => {
     if (!window.confirm('Вы уверены, что хотите удалить товар?')) return;
@@ -35,8 +41,8 @@ const ProductDetail = () => {
     }
   };
 
-  if (loading) return <div>Загрузка...</div>;
-  if (!product) return <div>Товар не найден</div>;
+  if (loading) return <div style={styles.loading}>Загрузка...</div>;
+  if (!product) return <div style={styles.error}>Товар не найден</div>;
 
   return (
     <div style={styles.container}>
@@ -45,12 +51,16 @@ const ProductDetail = () => {
       <div style={styles.header}>
         <h2>{product.title}</h2>
         <div style={styles.actions}>
-          <Link to={`/products/${id}/edit`} style={styles.editButton}>
-            Редактировать
-          </Link>
-          <button onClick={handleDelete} style={styles.deleteButton}>
-            Удалить
-          </button>
+          {canEdit && (
+            <Link to={`/products/${id}/edit`} style={styles.editButton}>
+              Редактировать
+            </Link>
+          )}
+          {canDelete && (
+            <button onClick={handleDelete} style={styles.deleteButton}>
+              Удалить
+            </button>
+          )}
           <Link to="/products" style={styles.backButton}>
             Назад к списку
           </Link>
@@ -63,6 +73,11 @@ const ProductDetail = () => {
         <p><strong>Цена:</strong> {product.price} ₽</p>
         <p><strong>Описание:</strong></p>
         <p style={styles.description}>{product.description}</p>
+        {product.createdByRole && (
+          <p style={styles.createdBy}>
+            <strong>Создал:</strong> {product.createdByRole === 'admin' ? 'Администратор' : 'Продавец'}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -88,17 +103,17 @@ const styles = {
   },
   editButton: {
     padding: '8px 16px',
-    backgroundColor: '#ff00f2',
-    color: 'black',
+    backgroundColor: '#ffc107',
+    color: '#333',
     textDecoration: 'none',
-    borderRadius: '3px',
+    borderRadius: '5px',
   },
   deleteButton: {
     padding: '8px 16px',
-    backgroundColor: '#ff004c',
+    backgroundColor: '#dc3545',
     color: 'white',
     border: 'none',
-    borderRadius: '3px',
+    borderRadius: '5px',
     cursor: 'pointer',
   },
   backButton: {
@@ -106,25 +121,39 @@ const styles = {
     backgroundColor: '#6c757d',
     color: 'white',
     textDecoration: 'none',
-    borderRadius: '3px',
+    borderRadius: '5px',
   },
   details: {
     border: '1px solid #ddd',
-    borderRadius: '5px',
+    borderRadius: '8px',
     padding: '20px',
+    backgroundColor: '#f9f9f9',
   },
   description: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: 'white',
     padding: '15px',
-    borderRadius: '3px',
+    borderRadius: '5px',
     marginTop: '5px',
+    border: '1px solid #eee',
+  },
+  createdBy: {
+    marginTop: '15px',
+    paddingTop: '10px',
+    borderTop: '1px solid #ddd',
+    color: '#666',
   },
   error: {
     color: 'red',
     marginBottom: '15px',
     padding: '10px',
     backgroundColor: '#ffeeee',
-    borderRadius: '3px',
+    borderRadius: '5px',
+  },
+  loading: {
+    textAlign: 'center',
+    padding: '50px',
+    fontSize: '18px',
+    color: '#666',
   },
 };
 

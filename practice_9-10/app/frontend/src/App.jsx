@@ -7,6 +7,7 @@ import Register from './components/Auth/Register';
 import ProductList from './components/Products/ProductList';
 import ProductForm from './components/Products/ProductForm';
 import ProductDetail from './components/Products/ProductDetail';
+import UserList from './components/Admin/UserList';
 
 function App() {
   return (
@@ -22,19 +23,28 @@ function App() {
             <ProductList />
           </ProtectedRoute>
         } />
+        
         <Route path="/products/create" element={
           <ProtectedRoute>
             <ProductForm />
           </ProtectedRoute>
         } />
+        
         <Route path="/products/:id" element={
           <ProtectedRoute>
             <ProductDetail />
           </ProtectedRoute>
         } />
+        
         <Route path="/products/:id/edit" element={
           <ProtectedRoute>
             <ProductForm />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/users" element={
+          <ProtectedRoute>
+            <UserList />
           </ProtectedRoute>
         } />
       </Routes>

@@ -9,7 +9,6 @@ export const apiClient = axios.create({
   },
 });
 
-// Перехватчик запросов 
 apiClient.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
@@ -21,7 +20,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Перехватчик ответов 
+// Перехватчик ответов
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -77,4 +76,36 @@ export const productsAPI = {
   create: (data) => apiClient.post('/products', data),
   update: (id, data) => apiClient.put(`/products/${id}`, data),
   delete: (id) => apiClient.delete(`/products/${id}`),
+};
+
+export const usersAPI = {
+  getAll: () => apiClient.get('/users'),
+  getById: (id) => apiClient.get(`/users/${id}`),
+  update: (id, data) => apiClient.put(`/users/${id}`, data),
+  delete: (id) => apiClient.delete(`/users/${id}`),
+};
+
+// Функции для работы с ролями
+export const getUserRole = () => {
+  try {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role;
+  } catch {
+    return null;
+  }
+};
+
+export const isAuthenticated = () => {
+  return !!localStorage.getItem('accessToken');
+};
+
+export const getRoleDisplay = (role) => {
+  switch(role) {
+    case 'admin': return { text: 'Администратор', color: '#dc3545' };
+    case 'seller': return { text: 'Продавец', color: '#ffc107' };
+    case 'user': return { text: 'Пользователь', color: '#28a745' };
+    default: return { text: 'Гость', color: '#6c757d' };
+  }
 };
