@@ -9,6 +9,7 @@ import ProductForm from './components/Products/ProductForm';
 import ProductDetail from './components/Products/ProductDetail';
 import UserList from './components/Admin/UserList';
 
+// Добавлена практика 11
 function App() {
   return (
     <BrowserRouter>
