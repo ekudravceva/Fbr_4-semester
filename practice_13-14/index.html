@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Заметки</title>
+
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Для Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4285f4">
+
+    <!-- Для iOS  -->
+    <link rel="favicon-180x180" href="/icons/favicon-180x180.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Для вкладки браузера  -->
+    <link rel="icon" href="/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="/icons/favicon-96x96.png" type="image/png">
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container" style="padding: 1rem;">
+        <h1>Заметки</h1>
+        <form id="note-form" class="row">
+            <input class="col-9" type="text" id="note-input" placeholder="Введите заметку" required>
+            <button class="col-3" type="submit">Добавить</button>
+        </form>
+        <ul id="notes-list"></ul>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
