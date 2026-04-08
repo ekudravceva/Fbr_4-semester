@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Заметки</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4285f4">
+    <link rel="favicon-180x180" href="/icons/favicon-180x180.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="/icons/favicon-96x96.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Мои заметки</h1>
+        <nav>
+            <button id="home-btn">Главная</button>
+            <button id="about-btn">О приложении</button>
+        </nav>
+    </header>
+    <main id="app-content"></main>
+    <footer>
+        <button id="enable-push">Включить уведомления</button>
+        <button id="disable-push" style="display:none;">Отключить уведомления</button>
+    </footer>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="/app.js"></script>
+</body>
+
+</html>
