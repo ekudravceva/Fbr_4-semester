@@ -1,0 +1,49 @@
+# Практика 19
+## 1. Запуск сервера
+```
+node server.js
+```
+
+## 2. Тестирование
+
+### Базовый URL
+```
+http://localhost:3000/api/users
+```
+
+### Создание пользователя 
+```
+POST - http://localhost:3000/api/users
+```
+```json
+{
+  "first_name": "Екатерина",
+  "last_name": "Кудрявцева",
+  "age": 20
+}
+```
+
+### Получение всех пользователей
+```
+GET - http://localhost:3000/api/users
+```
+
+### Получение пользователя по ID
+```
+GET - http://localhost:3000/api/users/1
+```
+
+### Обновление пользователя
+```
+PATCH - http://localhost:3000/api/users/1
+```
+```json
+{
+  "age": 26
+}
+```
+
+### Удаление пользователя
+```
+DELETE - http://localhost:3000/api/users/1
+```
