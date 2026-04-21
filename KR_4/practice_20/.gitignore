@@ -1,0 +1,53 @@
+# Зависимости (node_modules)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Файлы окружения (важно! не публикуйте пароли)
+.env
+.env.local
+.env.*.local
+
+# Логи
+logs/
+*.log
+
+# Файлы ОС
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы кода
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# MongoDB (локальные файлы БД)
+data/
+mongodb-data/
+dump/
+*.wt
+*.lock
+
+# Временные файлы
+tmp/
+temp/
+*.tmp
+
+# Отчёты о покрытии тестами
+coverage/
+.nyc_output/
+
+# Сборки
+dist/
+build/
+*.pem
+*.key
+*.cert
