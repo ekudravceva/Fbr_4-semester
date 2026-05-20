@@ -34,3 +34,6 @@ npm run build
 npm run preview
 
 ```
+
+## Анализатор бандла
+![alt text](Скриншот_пр25.png)
