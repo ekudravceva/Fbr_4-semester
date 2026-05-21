@@ -16,8 +16,8 @@ const books = [
   { id: '5', title: '1984', year: 1949, authorId: '3' },
 ];
 
-// Схема
-const typeDefs = `#graphql
+// Схема, graphql - подсказка для vs code для подсветки кода
+const typeDefs = `#graphql 
   type Author {
     id: ID!
     name: String!
